@@ -1,0 +1,20 @@
+#!/usr/bin/env raku
+
+use Test;
+use lib 'lib';
+use Net::Whois;
+
+nok '192.168.1.1' ~~ Domain, "An IP is not a domain name";
+ok 'example.com' ~~ Domain, 'Domain name with letters';
+ok '2example.com' ~~ Domain, 'Domain name with letters and starting numbers';
+ok 'example2.com' ~~ Domain, 'Domain name with letters and ending numbers';
+ok 'ex2ample.com' ~~ Domain, 'Domain name with letters and numbers';
+nok '2.com' ~~ Domain, 'A subdomain name has only numbers in it';
+ok 'example-a.com' ~~ Domain, 'A subdomain name with hyphens';
+ok 'com' ~~ Domain, 'First level domain';
+
+ok '192.168.1.1' ~~ IP, "Proper IP address";
+nok '192.168.1.256' ~~ IP, "IP address with number > 255";
+nok 'a.168.1.1' ~~ IP, "IP address with letters";
+
+done-testing;

@@ -1,0 +1,8 @@
+#!/usr/bin/env raku
+
+use Test;
+use lib 'lib';
+
+use-ok 'Net::Whois';
+
+done-testing;

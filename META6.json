@@ -1,0 +1,27 @@
+{
+  "auth": "zef:FRITH",
+  "authors": [
+    "Fernando Santagata"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "Raku interface to the Whois service",
+  "license": "Artistic-2.0",
+  "name": "Net::Whois",
+  "perl": "6.d",
+  "provides": {
+    "Net::Whois": "lib/Net/Whois.rakumod"
+  },
+  "resources": [
+  ],
+  "source-url": "git@github.com:frithnanth/Raku-Net-Whois.git",
+  "tags": [
+    "Whois",
+    "Net"
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}

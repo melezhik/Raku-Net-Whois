@@ -1,0 +1,35 @@
+#!/usr/bin/env raku
+
+use Test;
+use lib 'lib';
+use Net::Whois;
+
+my Net::Whois $nw .= new;
+my %result;
+my @lines;
+
+subtest 'single whois host' => {
+  %result = $nw.query: 'raku.org', 'whois.gandi.net';
+  ok %result{'Tech Phone'} eq 'REDACTED FOR PRIVACY', 'whois query';
+  %result = $nw.query: 'raku.org', 'whois.gandi.net', :multiple;
+  ok %result{'Tech Phone'} eq 'REDACTED FOR PRIVACY', 'whois query with :multiple';
+  @lines = $nw.query: 'raku.org', 'whois.gandi.net', :raw;
+  ok @lines[0] eq 'Domain Name: raku.org', 'raw result';
+}
+
+subtest 'multiple whois hosts' => {
+  %result = $nw.query: 'raku.org', 'whois.gandi.net', 'whois.iana.org';
+  ok %result<whois.gandi.net>{'Tech Phone'} eq 'REDACTED FOR PRIVACY' &&
+     %result<whois.iana.org><created> eq '1985-01-01',
+     'whois query to multiple hosts';
+  %result = $nw.query: 'raku.org', 'whois.gandi.net', 'whois.iana.org', :multiple;
+  ok %result<whois.gandi.net>{'Tech Phone'} eq 'REDACTED FOR PRIVACY' &&
+     %result<whois.iana.org><created> eq '1985-01-01',
+     'whois query to multiple hosts and :multiple';
+  %result = $nw.query: 'raku.org', 'whois.gandi.net', 'whois.iana.org', :raw;
+  ok %result<whois.gandi.net>[0] eq 'Domain Name: raku.org' &&
+     %result<whois.iana.org>[0] eq '% IANA WHOIS server',
+     'whois query to multiple hosts: raw result';
+}
+
+done-testing;
