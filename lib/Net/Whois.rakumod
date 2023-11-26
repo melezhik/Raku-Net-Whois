@@ -55,7 +55,7 @@ multi method query(Str:D $who where { $_ ~~ IP | Domain or die 'Not a valid IP o
 }
 
 method !connection(Str:D $who, Str:D $server --> List) {
-  my $sock = IO::Socket::INET.new: :host($server), :port(43);
+  my $sock = IO::Socket::INET.new: :host($server), :port(43), :encoding('utf8-c8');
   $sock.print: "$who\n";
   my @answers;
   for $sock.lines -> $line {
