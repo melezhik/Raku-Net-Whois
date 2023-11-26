@@ -1,0 +1,67 @@
+tasks:
+  -
+    name: zef-build
+    language: Bash
+    default: true
+    code: |
+      set -e
+      cd source/
+      zef install .
+    followup:
+      -
+        name: code_examples
+  -
+    name: code_examples
+    language: Raku
+    followup:
+      -
+        name: test_report
+    init: |
+      "{cache_root_dir()}/command.raku".IO.spurt(config()<code>);
+      run_task "example", %(
+        command => "{cache_root_dir()}/command.raku",
+        cnt => config()<cnt>,
+      );
+    subtasks:
+      -
+        name: example
+        language: Bash
+        code: |
+          echo "############################################# test_${cnt} ################################################"
+          echo "run: ["
+          cat $command
+          echo "]"
+          raku $command
+    code: |
+      say "Finished";
+      if "{cache_root_dir()}/tests/{config()<cnt>}.ok".IO ~~ :e {
+        say ">>> PASSED";
+        update_state(%( test => config()<cnt>, result => "PASSED" ))
+      } else {
+        say ">>> FAILED";
+        update_state(%( test => config()<cnt>, result => "FAILED" ))
+      }
+    hub:
+      language: Raku
+      code: |
+        my $code;
+        my @examples;
+        my $fh = open("source/README.md");
+        my $cnt = 1;
+        for $fh.lines -> $i { 
+          if $i ~~ /^ "```raku"/ ^fff^  $i ~~ /^ "```"/ { 
+            $code ~= "$i\n"
+          } elsif ($i ~~ /^ "```raku"/ or $fh.eof) { 
+            @examples.push(%( config => %( code => $code, cnt => $cnt++ ) )) if $code; 
+            $code = ""; 
+          }   
+        }
+        $fh.close();
+        update_state(%( list => @examples ));
+  -
+    name: test_report
+    language: Raku
+    code: |
+      for config()<parent><state><> -> $i {
+        say "test_{$i<test>} >>> {$i<result>}";
+      }        
