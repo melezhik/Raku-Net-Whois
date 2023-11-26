@@ -1,6 +1,8 @@
 Revision history for Net-Whois
 
 {{$NEXT}}
+
+0.0.2  2023-11-26T11:47:19+01:00
     - Open the socket using UFT8-C8 encoding
 
 0.0.1  2023-11-07T12:36:12+01:00
